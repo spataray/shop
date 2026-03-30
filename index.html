@@ -20,9 +20,10 @@
     <div class="container" id="app-container">
         <header>
             <div class="stats-bar">
-                <div class="savings-badge">
+                <div class="savings-badge" onclick="toggleBag()">
                     <span data-i18n="badge-saved">ประหยัดรวม:</span>
                     <span id="total-trip-savings">0.00</span>
+                    <span style="margin-left:8px;">🛍️</span>
                 </div>
             </div>
             <h1 data-i18n="title">ส่วนลด</h1>
@@ -76,13 +77,17 @@
             <button class="clear-btn" onclick="clearFields()" data-i18n="btn-clear">ล้างข้อมูล</button>
         </main>
 
-        <!-- Shopping Bag Section -->
-        <section class="bag-section">
-            <h2 data-i18n="header-bag">กระเป๋าช้อปปิ้ง</h2>
+        <!-- Shopping Bag Slide-up Panel -->
+        <div id="bag-panel" class="slide-up-panel">
+            <div class="panel-handle" onclick="toggleBag()"></div>
+            <div class="panel-header">
+                <h2 data-i18n="header-bag">กระเป๋าช้อปปิ้ง</h2>
+                <button class="close-panel-btn" onclick="toggleBag()">✕</button>
+            </div>
             <div id="bag-items-list">
                 <!-- Items will be injected here -->
             </div>
-        </section>
+        </div>
 
         <!-- Control Bar -->
         <div class="bottom-controls">
@@ -94,7 +99,7 @@
         </div>
 
         <footer>
-            <div id="version-tag">v1.7.1 (2026-03-29 16:45 HST)</div>
+            <div id="version-tag">v1.8.0 (2026-03-29 17:00 HST)</div>
         </footer>
     </div>
 

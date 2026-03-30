@@ -1,4 +1,4 @@
-// Shop v1.7.1 (2026-03-29 16:45 HST): Fixed Heart button mobile touch issue.
+// Shop v1.8.0 (2026-03-29 17:00 HST): Slide-up Bag Panel & Restored Fireworks.
 var currentLang = 'th';
 var taxEnabled = false;
 var baseFontSize = 1.2;
@@ -45,6 +45,7 @@ function changeFontSize(delta) {
     if (baseFontSize > 2.5) baseFontSize = 2.5;
     document.documentElement.style.setProperty('--base-font-size', baseFontSize + 'rem');
     localStorage.setItem('shop_font_size', baseFontSize);
+    createConfetti();
 }
 
 function toggleLanguage() {
@@ -60,12 +61,18 @@ function toggleTax() {
     if (taxEnabled) {
         btn.classList.add('active');
         row.style.display = 'flex';
+        createConfetti();
     } else {
         btn.classList.remove('active');
         row.style.display = 'none';
     }
     updateUI();
     calculate();
+}
+
+function toggleBag() {
+    var panel = document.getElementById('bag-panel');
+    panel.classList.toggle('active');
 }
 
 function updateUI() {
@@ -99,20 +106,21 @@ function calculate() {
     document.getElementById('display-savings').innerText = savings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById('display-tax-amount').innerText = '+' + taxAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById('display-total').innerText = finalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    if (price > 0 && discount > 0) {
+        createConfetti();
+    }
 }
 
 function clearFields() {
     document.getElementById('input-price').value = '';
     document.getElementById('input-discount').value = '';
-    
     var app = document.getElementById('app-container');
     app.classList.add('glow-effect');
     setTimeout(function() { app.classList.remove('glow-effect'); }, 500);
-    
     calculate();
 }
 
-// ── Bag Logic ──
 function saveDeal() {
     var price = parseFloat(document.getElementById('input-price').value) || 0;
     if (price <= 0) return;
@@ -120,15 +128,13 @@ function saveDeal() {
     var savingsText = document.getElementById('display-savings').innerText;
     var totalText = document.getElementById('display-total').innerText;
 
-    var deal = {
+    shoppingBag.unshift({
         total: totalText,
         saved: savingsText,
         rawSaved: parseFloat(savingsText.replace(/,/g, ''))
-    };
+    });
 
-    shoppingBag.unshift(deal);
     localStorage.setItem('shop_bag', JSON.stringify(shoppingBag));
-    
     createConfetti();
     renderBag();
 }
@@ -137,13 +143,11 @@ function renderBag() {
     var list = document.getElementById('bag-items-list');
     var totalSavedEl = document.getElementById('total-trip-savings');
     var strings = i18n[currentLang];
-    
     list.innerHTML = "";
     var totalTripSaved = 0;
 
     shoppingBag.forEach(function(item, index) {
         totalTripSaved += item.rawSaved;
-        
         var div = document.createElement('div');
         div.className = 'bag-item';
         div.innerHTML = '<div class="bag-item-info">' +
@@ -153,7 +157,6 @@ function renderBag() {
                         '<button class="del-btn" onclick="removeDeal('+index+')">✕</button>';
         list.appendChild(div);
     });
-
     totalSavedEl.innerText = totalTripSaved.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
@@ -165,6 +168,7 @@ function removeDeal(index) {
 
 function createConfetti() {
     var anchor = document.getElementById('confetti-anchor');
+    if(!anchor) return;
     var shapes = ['✨', '🌸', '💖', '⭐', '💎'];
     for (var i = 0; i < 12; i++) {
         var el = document.createElement('div');
@@ -177,24 +181,19 @@ function createConfetti() {
         el.style.setProperty('--tx', tx + 'px');
         el.style.setProperty('--ty', ty + 'px');
         anchor.appendChild(el);
-        (function(child) { setTimeout(function() { if(child.parentNode) anchor.removeChild(child); }, 800); })(el);
+        (function(child) { setTimeout(function() { if(child && child.parentNode) anchor.removeChild(child); }, 800); })(el);
     }
 }
 
 window.onload = function() {
     var savedTax = localStorage.getItem('shop_tax_rate');
     if (savedTax) document.getElementById('input-tax').value = savedTax;
-    
     var savedFont = localStorage.getItem('shop_font_size');
     if (savedFont) {
         baseFontSize = parseFloat(savedFont);
         document.documentElement.style.setProperty('--base-font-size', baseFontSize + 'rem');
     }
-
     var savedBag = localStorage.getItem('shop_bag');
     if (savedBag) shoppingBag = JSON.parse(savedBag);
-    
-    updateUI();
-    calculate();
-    renderBag();
+    updateUI(); calculate(); renderBag();
 };
