@@ -8,7 +8,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Magical Floating Background -->
+    <div id="magic-bg">
+        <span class="charm c1">🛍️</span>
+        <span class="charm c2">💎</span>
+        <span class="charm c3">✨</span>
+        <span class="charm c4">🌸</span>
+        <span class="charm c5">💄</span>
+    </div>
+
+    <div class="container" id="app-container">
         <header>
             <h1 data-i18n="title">ส่วนลด</h1>
         </header>
@@ -38,26 +47,28 @@
 
             <!-- Right Column: Results -->
             <div class="result-column">
-                <div class="result-card">
+                <div class="result-card" id="total-card">
                     <div class="result-row">
                         <span data-i18n="res-savings">ประหยัดไป</span>
                         <span id="display-savings">0.00</span>
                     </div>
                     <div class="result-row" id="row-tax-amount" style="display:none;">
                         <span data-i18n="res-tax-amt">ภาษีเพิ่มเติม</span>
-                        <span id="display-tax-amount" style="color:#ff8888;">+0.00</span>
+                        <span id="display-tax-amount" style="color:#FFF;">+0.00</span>
                     </div>
                     <div class="result-row final">
                         <span data-i18n="res-total">ราคาสุดท้าย</span>
                         <span id="display-total">0.00</span>
                     </div>
+                    <!-- Confetti Container -->
+                    <div id="confetti-anchor"></div>
                 </div>
             </div>
 
             <button class="clear-btn" onclick="clearFields()" data-i18n="btn-clear">ล้างข้อมูล</button>
         </main>
 
-        <!-- Control Bar (Moved to bottom for accessibility) -->
+        <!-- Control Bar -->
         <div class="bottom-controls">
             <div class="font-controls">
                 <button class="font-btn large" onclick="changeFontSize(0.1)">A+</button>
@@ -67,7 +78,7 @@
         </div>
 
         <footer>
-            <div id="version-tag">v1.5.0 (2026-03-29 16:00 HST)</div>
+            <div id="version-tag">v1.6.0 (2026-03-29 16:15 HST)</div>
         </footer>
     </div>
 

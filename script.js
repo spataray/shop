@@ -37,22 +37,26 @@ function changeFontSize(delta) {
     if (baseFontSize > 2.5) baseFontSize = 2.5;
     document.documentElement.style.setProperty('--base-font-size', baseFontSize + 'rem');
     localStorage.setItem('shop_font_size', baseFontSize);
+    createConfetti(); // Little sparkle for resizing
 }
 
 function toggleLanguage() {
     currentLang = (currentLang === 'th') ? 'en' : 'th';
     updateUI();
+    createConfetti();
 }
 
 function toggleTax() {
     taxEnabled = !taxEnabled;
     var btn = document.getElementById('tax-btn');
+    var row = document.getElementById('row-tax-amount');
     if (taxEnabled) {
         btn.classList.add('active');
-        document.getElementById('row-tax-amount').style.display = 'flex';
+        row.style.display = 'flex';
+        createConfetti();
     } else {
         btn.classList.remove('active');
-        document.getElementById('row-tax-amount').style.display = 'none';
+        row.style.display = 'none';
     }
     updateUI();
     calculate();
@@ -78,7 +82,6 @@ function calculate() {
 
     var savings = price * (discount / 100);
     var discountedPrice = price - savings;
-    
     var taxAmount = 0;
     var finalPrice = discountedPrice;
     
@@ -90,12 +93,52 @@ function calculate() {
     document.getElementById('display-savings').innerText = savings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById('display-tax-amount').innerText = '+' + taxAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById('display-total').innerText = finalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    // Magic Splash Effect on Total
+    if (price > 0 && discount > 0) {
+        createConfetti();
+    }
 }
 
 function clearFields() {
     document.getElementById('input-price').value = '';
     document.getElementById('input-discount').value = '';
+    
+    // Glimmer Effect
+    var app = document.getElementById('app-container');
+    app.classList.add('glow-effect');
+    setTimeout(function() { app.classList.remove('glow-effect'); }, 500);
+    
     calculate();
+}
+
+function createConfetti() {
+    var anchor = document.getElementById('confetti-anchor');
+    var colors = ['#D4AF37', '#E0A9AF', '#FCE4EC', '#FFF', '#B76E79'];
+    var shapes = ['✨', '🌸', '💖', '⭐', '💎'];
+
+    for (var i = 0; i < 8; i++) {
+        var el = document.createElement('div');
+        el.className = 'sparkle';
+        el.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+        el.style.left = '50%';
+        el.style.top = '50%';
+        el.style.color = colors[Math.floor(Math.random() * colors.length)];
+        el.style.fontSize = (Math.random() * 20 + 10) + 'px';
+        
+        // Random trajectory
+        var tx = (Math.random() - 0.5) * 300;
+        var ty = (Math.random() - 0.5) * 300;
+        el.style.setProperty('--tx', tx + 'px');
+        el.style.setProperty('--ty', ty + 'px');
+        
+        anchor.appendChild(el);
+        
+        // Cleanup
+        (function(child) {
+            setTimeout(function() { anchor.removeChild(child); }, 800);
+        })(el);
+    }
 }
 
 window.onload = function() {
