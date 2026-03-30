@@ -1,8 +1,10 @@
 var currentLang = 'th';
+var taxEnabled = false;
+var baseFontSize = 1.2;
 
 var i18n = {
     'th': {
-        'title': 'เครื่องคิดเลขส่วนลด',
+        'title': 'ส่วนลด',
         'label-price': 'ราคาปกติ',
         'label-discount': 'ส่วนลด (%)',
         'label-tax': 'ภาษี (%)',
@@ -10,88 +12,94 @@ var i18n = {
         'res-total': 'ราคาสุดท้าย',
         'btn-clear': 'ล้างข้อมูล',
         'toggle-btn': 'English',
-        'currency': '฿'
+        'tax-on': 'เปิด',
+        'tax-off': 'ปิด'
     },
     'en': {
-        'title': 'Discount Calculator',
-        'label-price': 'Original Price',
+        'title': 'Discount',
+        'label-price': 'Price',
         'label-discount': 'Discount (%)',
         'label-tax': 'Tax (%)',
-        'res-savings': 'You Save',
-        'res-total': 'Final Price',
-        'btn-clear': 'Clear All',
+        'res-savings': 'Savings',
+        'res-total': 'Final Total',
+        'btn-clear': 'Clear',
         'toggle-btn': 'ไทย',
-        'currency': '$'
+        'tax-on': 'ON',
+        'tax-off': 'OFF'
     }
 };
+
+function changeFontSize(delta) {
+    baseFontSize += delta;
+    if (baseFontSize < 0.8) baseFontSize = 0.8;
+    if (baseFontSize > 2.5) baseFontSize = 2.5;
+    document.documentElement.style.setProperty('--base-font-size', baseFontSize + 'rem');
+    localStorage.setItem('shop_font_size', baseFontSize);
+}
 
 function toggleLanguage() {
     currentLang = (currentLang === 'th') ? 'en' : 'th';
     updateUI();
 }
 
+function toggleTax() {
+    taxEnabled = !taxEnabled;
+    var btn = document.getElementById('tax-btn');
+    if (taxEnabled) {
+        btn.classList.add('active');
+    } else {
+        btn.classList.remove('active');
+    }
+    updateUI();
+    calculate();
+}
+
 function updateUI() {
     var strings = i18n[currentLang];
-    
-    // Update labels
     var elements = document.querySelectorAll('[data-i18n]');
     for (var i = 0; i < elements.length; i++) {
         var key = elements[i].getAttribute('data-i18n');
-        if (strings[key]) {
-            elements[i].innerText = strings[key];
-        }
+        if (strings[key]) elements[i].innerText = strings[key];
     }
-
-    // Update currency spans
-    var currencySpans = document.querySelectorAll('.currency');
-    for (var j = 0; j < currencySpans.length; j++) {
-        currencySpans[j].innerText = strings['currency'];
-    }
-
-    // Update button text
     document.getElementById('btn-lang').innerText = strings['toggle-btn'];
-
-    // Re-calculate to update result strings
-    calculate();
+    document.getElementById('tax-status-text').innerText = taxEnabled ? strings['tax-on'] : strings['tax-off'];
 }
 
 function calculate() {
     var price = parseFloat(document.getElementById('input-price').value) || 0;
     var discount = parseFloat(document.getElementById('input-discount').value) || 0;
-    var taxEnabled = document.getElementById('tax-enable').checked;
     var taxRate = parseFloat(document.getElementById('input-tax').value) || 0;
 
-    // Save tax rate preference
     localStorage.setItem('shop_tax_rate', taxRate);
 
-    // 1. Calculate discount
     var savings = price * (discount / 100);
     var discountedPrice = price - savings;
-
-    // 2. Calculate tax
     var finalPrice = discountedPrice;
+    
     if (taxEnabled) {
         finalPrice = discountedPrice * (1 + (taxRate / 100));
     }
 
-    // 3. Display results
-    var strings = i18n[currentLang];
-    document.getElementById('display-savings').innerText = savings.toFixed(2) + ' ' + strings['currency'];
-    document.getElementById('display-total').innerText = finalPrice.toFixed(2) + ' ' + strings['currency'];
+    document.getElementById('display-savings').innerText = savings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('display-total').innerText = finalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 function clearFields() {
     document.getElementById('input-price').value = '';
     document.getElementById('input-discount').value = '';
-    document.getElementById('tax-enable').checked = false;
     calculate();
 }
 
-// Initialize
 window.onload = function() {
     var savedTax = localStorage.getItem('shop_tax_rate');
-    if (savedTax) {
-        document.getElementById('input-tax').value = savedTax;
+    if (savedTax) document.getElementById('input-tax').value = savedTax;
+    
+    var savedFont = localStorage.getItem('shop_font_size');
+    if (savedFont) {
+        baseFontSize = parseFloat(savedFont);
+        document.documentElement.style.setProperty('--base-font-size', baseFontSize + 'rem');
     }
-    updateUI(); // Set default Thai
+    
+    updateUI();
+    calculate();
 };
