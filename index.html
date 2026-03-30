@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Luxury Shop Calc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:wght@700&family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="lang-toggle">
+                <button id="btn-lang" onclick="toggleLanguage()">English</button>
+            </div>
+            <h1 data-i18n="title">เครื่องคิดเลขส่วนลด</h1>
+        </header>
+
+        <main>
+            <div class="input-group">
+                <label data-i18n="label-price">ราคาปกติ</label>
+                <div class="input-wrapper">
+                    <input type="number" id="input-price" placeholder="0.00" oninput="calculate()">
+                    <span class="currency">฿</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label data-i18n="label-discount">ส่วนลด (%)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="input-discount" placeholder="0" oninput="calculate()">
+                    <span class="unit">%</span>
+                </div>
+            </div>
+
+            <div class="input-group tax-section">
+                <div class="tax-header">
+                    <label data-i18n="label-tax">ภาษี (%)</label>
+                    <div class="toggle-wrapper">
+                        <input type="checkbox" id="tax-enable" onchange="calculate()">
+                        <span class="slider"></span>
+                    </div>
+                </div>
+                <div class="input-wrapper" id="tax-input-container">
+                    <input type="number" id="input-tax" value="7" oninput="calculate()">
+                    <span class="unit">%</span>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-row">
+                    <span data-i18n="res-savings">ประหยัดไป</span>
+                    <span id="display-savings">0.00 ฿</span>
+                </div>
+                <div class="result-row final">
+                    <span data-i18n="res-total">ราคาสุดท้าย</span>
+                    <span id="display-total">0.00 ฿</span>
+                </div>
+            </div>
+
+            <button class="clear-btn" onclick="clearFields()" data-i18n="btn-clear">ล้างข้อมูล</button>
+        </main>
+
+        <footer>
+            <div id="version-tag">v1.0.0 (2026-03-29 13:57 HST)</div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

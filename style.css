@@ -1,0 +1,234 @@
+:root {
+    --gold: #D4AF37;
+    --charcoal: #1a1a1a;
+    --cream: #F9F7F2;
+    --white: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Sarabun', 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    padding: 40px 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.lang-toggle {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+#btn-lang {
+    background: var(--charcoal);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    margin: 0;
+    color: var(--charcoal);
+    border-bottom: 2px solid var(--gold);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 15px 45px 15px 20px;
+    font-size: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--charcoal);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type="number"]:focus {
+    border-color: var(--gold);
+}
+
+.currency, .unit {
+    position: absolute;
+    right: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+/* Tax Section Specifics */
+.tax-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tax-header label { margin-bottom: 0; }
+
+.toggle-wrapper {
+    position: relative;
+    width: 50px;
+    height: 26px;
+}
+
+.toggle-wrapper input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; width: 18px;
+    left: 4px; bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider { background-color: var(--gold); }
+input:checked + .slider:before { transform: translateX(24px); }
+
+/* Result Card */
+.result-card {
+    background: var(--charcoal);
+    color: var(--white);
+    padding: 30px;
+    border-radius: 20px;
+    margin-top: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 1px solid var(--gold);
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.result-row span:first-child {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+}
+
+.result-row span:last-child {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.result-row.final {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.result-row.final span:first-child {
+    font-size: 1.1rem;
+    opacity: 1;
+    color: var(--gold);
+}
+
+.result-row.final span:last-child {
+    font-size: 2.2rem;
+    color: var(--gold);
+}
+
+.clear-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #ddd;
+    color: #999;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+footer {
+    margin-top: auto;
+    padding-top: 40px;
+    text-align: center;
+}
+
+#version-tag {
+    font-size: 0.7rem;
+    color: #bbb;
+    font-family: monospace;
+}
+
+/* Hide spin buttons */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
