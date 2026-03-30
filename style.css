@@ -33,10 +33,10 @@ h1, label, input, button, span {
 header { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
 .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 
-.font-controls { display: flex; gap: 10px; }
+.font-controls { display: flex; gap: 25px; }
 .font-btn {
     background: var(--charcoal); color: var(--white); border: 1px solid var(--gold);
-    width: 50px; height: 50px; border-radius: 50%; font-weight: bold; font-size: 1.2rem;
+    width: 65px; height: 65px; border-radius: 50%; font-weight: bold; font-size: 1.5rem;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 
