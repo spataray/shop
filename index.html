@@ -19,6 +19,12 @@
 
     <div class="container" id="app-container">
         <header>
+            <div class="stats-bar">
+                <div class="savings-badge">
+                    <span data-i18n="badge-saved">ประหยัดรวม:</span>
+                    <span id="total-trip-savings">0.00</span>
+                </div>
+            </div>
             <h1 data-i18n="title">ส่วนลด</h1>
         </header>
 
@@ -60,6 +66,8 @@
                         <span data-i18n="res-total">ราคาสุดท้าย</span>
                         <span id="display-total">0.00</span>
                     </div>
+                    <!-- Save Button -->
+                    <button id="btn-save-deal" onclick="saveDeal()" title="Save to Bag">💖</button>
                     <!-- Confetti Container -->
                     <div id="confetti-anchor"></div>
                 </div>
@@ -67,6 +75,14 @@
 
             <button class="clear-btn" onclick="clearFields()" data-i18n="btn-clear">ล้างข้อมูล</button>
         </main>
+
+        <!-- Shopping Bag Section -->
+        <section class="bag-section">
+            <h2 data-i18n="header-bag">กระเป๋าช้อปปิ้ง</h2>
+            <div id="bag-items-list">
+                <!-- Items will be injected here -->
+            </div>
+        </section>
 
         <!-- Control Bar -->
         <div class="bottom-controls">
@@ -78,7 +94,7 @@
         </div>
 
         <footer>
-            <div id="version-tag">v1.6.0 (2026-03-29 16:15 HST)</div>
+            <div id="version-tag">v1.7.0 (2026-03-29 16:30 HST)</div>
         </footer>
     </div>
 
