@@ -9,6 +9,7 @@ var i18n = {
         'label-discount': 'ส่วนลด (%)',
         'label-tax': 'ภาษี (%)',
         'res-savings': 'ประหยัดไป',
+        'res-tax-amt': 'ภาษีเพิ่มเติม',
         'res-total': 'ราคาสุดท้าย',
         'btn-clear': 'ล้างข้อมูล',
         'toggle-btn': 'English',
@@ -21,8 +22,9 @@ var i18n = {
         'label-discount': 'Discount (%)',
         'label-tax': 'Tax (%)',
         'res-savings': 'Savings',
+        'res-tax-amt': 'Tax Added',
         'res-total': 'Final Total',
-        'btn-clear': 'Clear',
+        'btn-clear': 'Clear All',
         'toggle-btn': 'ไทย',
         'tax-on': 'ON',
         'tax-off': 'OFF'
@@ -47,8 +49,10 @@ function toggleTax() {
     var btn = document.getElementById('tax-btn');
     if (taxEnabled) {
         btn.classList.add('active');
+        document.getElementById('row-tax-amount').style.display = 'flex';
     } else {
         btn.classList.remove('active');
+        document.getElementById('row-tax-amount').style.display = 'none';
     }
     updateUI();
     calculate();
@@ -74,13 +78,17 @@ function calculate() {
 
     var savings = price * (discount / 100);
     var discountedPrice = price - savings;
+    
+    var taxAmount = 0;
     var finalPrice = discountedPrice;
     
     if (taxEnabled) {
-        finalPrice = discountedPrice * (1 + (taxRate / 100));
+        taxAmount = discountedPrice * (taxRate / 100);
+        finalPrice = discountedPrice + taxAmount;
     }
 
     document.getElementById('display-savings').innerText = savings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('display-tax-amount').innerText = '+' + taxAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById('display-total').innerText = finalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
