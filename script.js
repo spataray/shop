@@ -1,8 +1,7 @@
-// Shop v1.8.0 (2026-03-29 17:00 HST): Slide-up Bag Panel & Restored Fireworks.
+// Shop v1.9.0 (2026-03-29 17:30 HST): Added Calculation Breakdown & Restored Fireworks.
 var currentLang = 'th';
 var taxEnabled = false;
 var baseFontSize = 1.2;
-var shoppingBag = [];
 
 var i18n = {
     'th': {
@@ -17,9 +16,7 @@ var i18n = {
         'toggle-btn': 'English',
         'tax-on': 'เปิด',
         'tax-off': 'ปิด',
-        'header-bag': 'กระเป๋าช้อปปิ้ง 🛍️',
-        'badge-saved': 'ประหยัดรวม:',
-        'item-saved': 'ประหยัดได้'
+        'header-math': 'วิธีคำนวณ:'
     },
     'en': {
         'title': 'Discount',
@@ -33,9 +30,7 @@ var i18n = {
         'toggle-btn': 'ไทย',
         'tax-on': 'ON',
         'tax-off': 'OFF',
-        'header-bag': 'Shopping Bag 🛍️',
-        'badge-saved': 'Total Saved:',
-        'item-saved': 'Saved'
+        'header-math': 'How it\'s calculated:'
     }
 };
 
@@ -51,7 +46,6 @@ function changeFontSize(delta) {
 function toggleLanguage() {
     currentLang = (currentLang === 'th') ? 'en' : 'th';
     updateUI();
-    renderBag();
 }
 
 function toggleTax() {
@@ -61,18 +55,12 @@ function toggleTax() {
     if (taxEnabled) {
         btn.classList.add('active');
         row.style.display = 'flex';
-        createConfetti();
     } else {
         btn.classList.remove('active');
         row.style.display = 'none';
     }
     updateUI();
     calculate();
-}
-
-function toggleBag() {
-    var panel = document.getElementById('bag-panel');
-    panel.classList.toggle('active');
 }
 
 function updateUI() {
@@ -107,9 +95,32 @@ function calculate() {
     document.getElementById('display-tax-amount').innerText = '+' + taxAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById('display-total').innerText = finalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
+    updateMathBreakdown(price, discount, taxRate, savings, discountedPrice, taxAmount, finalPrice);
+
     if (price > 0 && discount > 0) {
         createConfetti();
     }
+}
+
+function updateMathBreakdown(price, discount, taxRate, savings, discountedPrice, taxAmount, finalPrice) {
+    var formulaEl = document.getElementById('math-formula');
+    if (price <= 0) {
+        formulaEl.innerText = "--";
+        return;
+    }
+
+    var symbol = (currentLang === 'th') ? '฿' : '$';
+    var text = price.toFixed(2) + " " + symbol;
+    
+    if (discount > 0) {
+        text += " - " + discount + "% (" + savings.toFixed(2) + ") = " + discountedPrice.toFixed(2);
+    }
+    
+    if (taxEnabled && taxRate > 0) {
+        text += " + " + taxRate + "% (" + taxAmount.toFixed(2) + ") = " + finalPrice.toFixed(2);
+    }
+
+    formulaEl.innerText = text + " " + symbol;
 }
 
 function clearFields() {
@@ -121,63 +132,18 @@ function clearFields() {
     calculate();
 }
 
-function saveDeal() {
-    var price = parseFloat(document.getElementById('input-price').value) || 0;
-    if (price <= 0) return;
-
-    var savingsText = document.getElementById('display-savings').innerText;
-    var totalText = document.getElementById('display-total').innerText;
-
-    shoppingBag.unshift({
-        total: totalText,
-        saved: savingsText,
-        rawSaved: parseFloat(savingsText.replace(/,/g, ''))
-    });
-
-    localStorage.setItem('shop_bag', JSON.stringify(shoppingBag));
-    createConfetti();
-    renderBag();
-}
-
-function renderBag() {
-    var list = document.getElementById('bag-items-list');
-    var totalSavedEl = document.getElementById('total-trip-savings');
-    var strings = i18n[currentLang];
-    list.innerHTML = "";
-    var totalTripSaved = 0;
-
-    shoppingBag.forEach(function(item, index) {
-        totalTripSaved += item.rawSaved;
-        var div = document.createElement('div');
-        div.className = 'bag-item';
-        div.innerHTML = '<div class="bag-item-info">' +
-                        '<div class="bag-item-total">' + item.total + '</div>' +
-                        '<div class="bag-item-saved">' + strings['item-saved'] + ': ' + item.saved + '</div>' +
-                        '</div>' +
-                        '<button class="del-btn" onclick="removeDeal('+index+')">✕</button>';
-        list.appendChild(div);
-    });
-    totalSavedEl.innerText = totalTripSaved.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-}
-
-function removeDeal(index) {
-    shoppingBag.splice(index, 1);
-    localStorage.setItem('shop_bag', JSON.stringify(shoppingBag));
-    renderBag();
-}
-
 function createConfetti() {
     var anchor = document.getElementById('confetti-anchor');
     if(!anchor) return;
     var shapes = ['✨', '🌸', '💖', '⭐', '💎'];
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < 10; i++) {
         var el = document.createElement('div');
         el.className = 'sparkle';
         el.innerText = shapes[Math.floor(Math.random() * shapes.length)];
         el.style.left = '50%'; el.style.top = '50%';
-        el.style.fontSize = (Math.random() * 25 + 15) + 'px';
-        var tx = (Math.random() - 0.5) * 400;
-        var ty = (Math.random() - 0.5) * 400;
+        el.style.fontSize = (Math.random() * 20 + 10) + 'px';
+        var tx = (Math.random() - 0.5) * 350;
+        var ty = (Math.random() - 0.5) * 350;
         el.style.setProperty('--tx', tx + 'px');
         el.style.setProperty('--ty', ty + 'px');
         anchor.appendChild(el);
@@ -193,7 +159,6 @@ window.onload = function() {
         baseFontSize = parseFloat(savedFont);
         document.documentElement.style.setProperty('--base-font-size', baseFontSize + 'rem');
     }
-    var savedBag = localStorage.getItem('shop_bag');
-    if (savedBag) shoppingBag = JSON.parse(savedBag);
-    updateUI(); calculate(); renderBag();
+    updateUI();
+    calculate();
 };
