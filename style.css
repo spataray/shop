@@ -90,7 +90,22 @@ input[type="number"]:focus { border-color: var(--rose-gold); }
 .bag-item-saved { font-size: 0.9rem; color: var(--rose-gold); font-weight: 600; }
 .del-btn { background: #FAA; color: #FFF; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
 
-.clear-btn { grid-column: span 2; padding: 18px; background: transparent; border: 2px solid #EEE; color: #BBB; border-radius: 20px; font-weight: 700; cursor: pointer; }
+.clear-btn { 
+    grid-column: span 2; 
+    padding: 20px; 
+    background: var(--espresso); 
+    color: var(--white); 
+    border: none;
+    border-radius: 20px; 
+    font-weight: 900; 
+    font-size: 1.4rem;
+    cursor: pointer; 
+    margin-top: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.clear-btn:active { transform: scale(0.98); opacity: 0.9; }
 
 /* Control Bar */
 .bottom-controls { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 20px; }
