@@ -1,3 +1,4 @@
+// Shop v1.7.1 (2026-03-29 16:45 HST): Fixed Heart button mobile touch issue.
 var currentLang = 'th';
 var taxEnabled = false;
 var baseFontSize = 1.2;

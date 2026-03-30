@@ -75,12 +75,27 @@ input[type="number"]:focus { border-color: var(--rose-gold); transform: scale(1.
 .result-row.final span:last-child { font-size: 2.2em; color: var(--white); animation: pulse 2s infinite; }
 
 #btn-save-deal {
-    position: absolute; top: -15px; right: -15px; width: 60px; height: 60px;
-    background: var(--white); color: var(--rose-gold); border: 3px solid var(--rose-gold);
-    border-radius: 50%; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.2s;
+    position: absolute; 
+    top: -10px; 
+    right: -10px; 
+    width: 75px; /* Larger for thumb */
+    height: 75px;
+    background: var(--white); 
+    color: var(--rose-gold); 
+    border: 3px solid var(--rose-gold);
+    border-radius: 50%; 
+    font-size: 2.2rem; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+    transition: transform 0.2s;
+    z-index: 100; /* Ensure it is on top */
+    pointer-events: auto; /* Force clickability */
+    touch-action: manipulation;
 }
-#btn-save-deal:active { transform: scale(0.9) rotate(15deg); }
+#btn-save-deal:active { transform: scale(0.85) rotate(10deg); background: var(--blush); }
 
 /* Confetti */
 .sparkle { position: absolute; pointer-events: none; animation: burst 0.8s ease-out forwards; }
