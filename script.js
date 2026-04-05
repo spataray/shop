@@ -1,4 +1,4 @@
-// Shop v1.9.0 (2026-03-29 17:30 HST): Added Calculation Breakdown & Restored Fireworks.
+// Shop v1.9.1 (2026-04-04 18:32 HST): Updated default tax to Hawaii GET (4.5%).
 var currentLang = 'th';
 var taxEnabled = false;
 var baseFontSize = 1.2;
