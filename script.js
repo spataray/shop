@@ -1,4 +1,4 @@
-// Shop v1.9.1 (2026-04-04 18:32 HST): Updated default tax to Hawaii GET (4.5%).
+// Shop v1.9.2 (2026-04-04 18:40 HST): Added premium SVG favicon.
 var currentLang = 'th';
 var taxEnabled = false;
 var baseFontSize = 1.2;
