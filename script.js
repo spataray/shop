@@ -206,18 +206,34 @@ async function updateExchange() {
 
     try {
         const response = await fetch(`https://api.frankfurter.app/latest?from=${fromCurrency}&to=${toCurrency}`);
-        const data = await response.json();
-        exchangeRate = data.rates[toCurrency];
-        rateEl.innerText = exchangeRate.toFixed(4);
-        convertCurrency();
         
-        // Add a little "pulse" to show it updated
-        const card = document.querySelector('.gold-card');
-        card.classList.add('glow-effect');
-        setTimeout(() => card.classList.remove('glow-effect'), 500);
+        if (!response.ok) {
+            throw new Error(`API returned ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (data && data.rates && data.rates[toCurrency]) {
+            exchangeRate = data.rates[toCurrency];
+            rateEl.innerText = exchangeRate.toFixed(4);
+            convertCurrency();
+            
+            // Add a little "pulse" to show it updated
+            const card = document.querySelector('.gold-card');
+            card.classList.add('glow-effect');
+            setTimeout(() => card.classList.remove('glow-effect'), 500);
+        } else {
+            throw new Error("Invalid data format");
+        }
     } catch (error) {
         console.error("Error fetching exchange rate:", error);
-        rateEl.innerText = "Error";
+        rateEl.innerText = "Offline/Retry";
+        // Attempt to use a fallback hardcoded rate if the API is completely down
+        // so the app remains somewhat functional
+        if (exchangeRate === 1.0) { // If it's never been set
+            exchangeRate = (fromCurrency === 'USD') ? 32.51 : 0.0308; 
+            convertCurrency();
+        }
     }
 }
 
