@@ -196,14 +196,33 @@ function createConfetti() {
 
 // --- Exchange Mode ---
 async function updateExchange() {
+    const rateEl = document.getElementById('current-rate');
+    const resultValEl = document.getElementById('exchange-result-val');
+    
+    rateEl.innerText = "loading...";
+    resultValEl.innerText = "...";
+
     try {
         const response = await fetch(`https://api.frankfurter.app/latest?from=${fromCurrency}&to=${toCurrency}`);
         const data = await response.json();
         exchangeRate = data.rates[toCurrency];
-        document.getElementById('current-rate').innerText = exchangeRate.toFixed(4);
+        rateEl.innerText = exchangeRate.toFixed(4);
         convertCurrency();
+        
+        // Add a little "pulse" to show it updated
+        const card = document.querySelector('.gold-card');
+        card.classList.add('glow-effect');
+        setTimeout(() => card.classList.remove('glow-effect'), 500);
     } catch (error) {
         console.error("Error fetching exchange rate:", error);
+        rateEl.innerText = "Error";
+    }
+}
+
+function handleExchangeKey(event) {
+    if (event.key === "Enter") {
+        event.target.blur(); // Hide keyboard on mobile
+        convertCurrency();
     }
 }
 

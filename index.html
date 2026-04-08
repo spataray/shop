@@ -89,7 +89,7 @@
                 <div class="input-column">
                     <div class="input-group">
                         <label data-i18n="label-amount">จำนวนเงิน</label>
-                        <input type="number" id="input-exchange-amount" value="1.00" inputmode="decimal" oninput="convertCurrency()">
+                        <input type="number" id="input-exchange-amount" value="1.00" inputmode="decimal" oninput="convertCurrency()" onkeydown="handleExchangeKey(event)">
                     </div>
                     
                     <div class="currency-selectors">
@@ -149,7 +149,7 @@
         </div>
 
         <footer>
-            <div id="version-tag">v2.0.0 (2026-04-07 10:15 HST)</div>
+            <div id="version-tag">v2.0.1 (2026-04-07 10:30 HST)</div>
         </footer>
     </div>
 
