@@ -92,6 +92,8 @@
                         <input type="number" id="input-exchange-amount" value="1.00" inputmode="decimal" oninput="convertCurrency()" onkeydown="handleExchangeKey(event)">
                     </div>
                     
+                    <button class="clear-btn" onclick="updateExchange()" data-i18n="btn-convert">คำนวณและอัปเดตเรท</button>
+                    
                     <div class="currency-selectors">
                         <div class="currency-box" id="from-currency">
                             <span class="flag">🇺🇸</span>
@@ -149,7 +151,7 @@
         </div>
 
         <footer>
-            <div id="version-tag">v2.0.1 (2026-04-07 10:30 HST)</div>
+            <div id="version-tag">v2.0.2 (2026-04-07 10:45 HST)</div>
         </footer>
     </div>
 

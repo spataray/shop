@@ -26,7 +26,8 @@ var i18n = {
         'mode-exchange': '💱 แลกเงิน',
         'mode-calc': '🛒 ส่วนลด',
         'label-amount': 'จำนวนเงิน',
-        'header-trend': 'แนวโน้มย้อนหลัง'
+        'header-trend': 'แนวโน้มย้อนหลัง',
+        'btn-convert': 'คำนวณและอัปเดตเรท'
     },
     'en': {
         'title': 'Discount',
@@ -45,7 +46,8 @@ var i18n = {
         'mode-exchange': '💱 Exchange',
         'mode-calc': '🛒 Discount',
         'label-amount': 'Amount',
-        'header-trend': 'Historical Trend'
+        'header-trend': 'Historical Trend',
+        'btn-convert': 'Calculate & Refresh'
     }
 };
 
