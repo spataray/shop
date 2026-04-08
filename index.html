@@ -20,60 +20,124 @@
 
     <div class="container" id="app-container">
         <header>
-            <h1 data-i18n="title">ส่วนลด</h1>
+            <div class="header-top">
+                <h1 data-i18n="title">ส่วนลด</h1>
+                <button id="mode-toggle" class="mode-btn" onclick="toggleMode()">
+                    <span data-i18n="mode-exchange">💱 แลกเงิน</span>
+                </button>
+            </div>
         </header>
 
-        <main>
-            <!-- Left Column: Inputs -->
-            <div class="input-column">
-                <div class="input-group">
-                    <label data-i18n="label-price">ราคาปกติ</label>
-                    <input type="number" id="input-price" placeholder="0.00" inputmode="decimal" oninput="calculate()">
-                </div>
+        <!-- Calculator Mode -->
+        <div id="calc-mode">
+            <main>
+                <!-- Left Column: Inputs -->
+                <div class="input-column">
+                    <div class="input-group">
+                        <label data-i18n="label-price">ราคาปกติ</label>
+                        <input type="number" id="input-price" placeholder="0.00" inputmode="decimal" oninput="calculate()">
+                    </div>
 
-                <div class="input-group">
-                    <label data-i18n="label-discount">ส่วนลด (%)</label>
-                    <input type="number" id="input-discount" placeholder="0" inputmode="decimal" oninput="calculate()">
-                </div>
+                    <div class="input-group">
+                        <label data-i18n="label-discount">ส่วนลด (%)</label>
+                        <input type="number" id="input-discount" placeholder="0" inputmode="decimal" oninput="calculate()">
+                    </div>
 
-                <div class="tax-section">
-                    <button id="tax-btn" class="tax-toggle-btn" onclick="toggleTax()">
-                        <span data-i18n="label-tax">ภาษี (%)</span>: <span id="tax-status-text">OFF</span>
-                    </button>
-                    <div class="input-group" style="margin-bottom:0;">
-                        <input type="number" id="input-tax" value="4.5" inputmode="decimal" oninput="calculate()">
+                    <div class="tax-section">
+                        <button id="tax-btn" class="tax-toggle-btn" onclick="toggleTax()">
+                            <span data-i18n="label-tax">ภาษี (%)</span>: <span id="tax-status-text">OFF</span>
+                        </button>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <input type="number" id="input-tax" value="4.5" inputmode="decimal" oninput="calculate()">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: Results -->
-            <div class="result-column">
-                <div class="result-card" id="total-card">
-                    <div class="result-row">
-                        <span data-i18n="res-savings">ประหยัดไป</span>
-                        <span id="display-savings">0.00</span>
+                <!-- Right Column: Results -->
+                <div class="result-column">
+                    <div class="result-card" id="total-card">
+                        <div class="result-row">
+                            <span data-i18n="res-savings">ประหยัดไป</span>
+                            <span id="display-savings">0.00</span>
+                        </div>
+                        <div class="result-row" id="row-tax-amount" style="display:none;">
+                            <span data-i18n="res-tax-amt">ภาษีเพิ่มเติม</span>
+                            <span id="display-tax-amount" style="color:#FFF;">+0.00</span>
+                        </div>
+                        <div class="result-row final">
+                            <span data-i18n="res-total">ราคาสุดท้าย</span>
+                            <span id="display-total">0.00</span>
+                        </div>
+                        <!-- Confetti Container -->
+                        <div id="confetti-anchor"></div>
                     </div>
-                    <div class="result-row" id="row-tax-amount" style="display:none;">
-                        <span data-i18n="res-tax-amt">ภาษีเพิ่มเติม</span>
-                        <span id="display-tax-amount" style="color:#FFF;">+0.00</span>
-                    </div>
-                    <div class="result-row final">
-                        <span data-i18n="res-total">ราคาสุดท้าย</span>
-                        <span id="display-total">0.00</span>
-                    </div>
-                    <!-- Confetti Container -->
-                    <div id="confetti-anchor"></div>
                 </div>
-            </div>
 
-            <button class="clear-btn" onclick="clearFields()" data-i18n="btn-clear">ล้างข้อมูล</button>
-        </main>
+                <button class="clear-btn" onclick="clearFields()" data-i18n="btn-clear">ล้างข้อมูล</button>
+            </main>
 
-        <!-- Calculation Breakdown Section -->
-        <section class="breakdown-section">
-            <h3 data-i18n="header-math">วิธีคำนวณ:</h3>
-            <div id="math-formula">--</div>
-        </section>
+            <!-- Calculation Breakdown Section -->
+            <section class="breakdown-section">
+                <h3 data-i18n="header-math">วิธีคำนวณ:</h3>
+                <div id="math-formula">--</div>
+            </section>
+        </div>
+
+        <!-- Exchange Mode -->
+        <div id="exchange-mode" style="display:none;">
+            <main>
+                <div class="input-column">
+                    <div class="input-group">
+                        <label data-i18n="label-amount">จำนวนเงิน</label>
+                        <input type="number" id="input-exchange-amount" value="1.00" inputmode="decimal" oninput="convertCurrency()">
+                    </div>
+                    
+                    <div class="currency-selectors">
+                        <div class="currency-box" id="from-currency">
+                            <span class="flag">🇺🇸</span>
+                            <span class="code">USD</span>
+                        </div>
+                        <button class="swap-btn" onclick="swapCurrencies()">⇄</button>
+                        <div class="currency-box" id="to-currency">
+                            <span class="flag">🇹🇭</span>
+                            <span class="code">THB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-column">
+                    <div class="result-card gold-card">
+                        <div class="result-row">
+                            <span id="exchange-from-text">1.00 USD</span>
+                            <span>=</span>
+                        </div>
+                        <div class="result-row final">
+                            <span id="exchange-result-val">0.00</span>
+                            <span id="exchange-to-code">THB</span>
+                        </div>
+                        <div class="exchange-rate-info">
+                            1 <span id="base-code">USD</span> = <span id="current-rate">--</span> <span id="target-code">THB</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h3 data-i18n="header-trend">แนวโน้มย้อนหลัง</h3>
+                    <div class="timeframe-btns">
+                        <button onclick="updateChart(1)" class="tf-btn active" data-tf="1">1M</button>
+                        <button onclick="updateChart(3)" class="tf-btn" data-tf="3">3M</button>
+                        <button onclick="updateChart(6)" class="tf-btn" data-tf="6">6M</button>
+                        <button onclick="updateChart(9)" class="tf-btn" data-tf="9">9M</button>
+                        <button onclick="updateChart(12)" class="tf-btn" data-tf="12">12M</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="rateChart"></canvas>
+                </div>
+            </section>
+        </div>
 
         <!-- Control Bar -->
         <div class="bottom-controls">
@@ -85,10 +149,11 @@
         </div>
 
         <footer>
-            <div id="version-tag">v1.9.2 (2026-04-04 18:40 HST)</div>
+            <div id="version-tag">v2.0.0 (2026-04-07 10:15 HST)</div>
         </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

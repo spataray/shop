@@ -1,11 +1,17 @@
-// Shop v1.9.2 (2026-04-04 18:40 HST): Added premium SVG favicon.
+// Shop v2.0.0 (2026-04-07 10:15 HST): Added Money Exchange mode with trend graphs.
 var currentLang = 'th';
 var taxEnabled = false;
 var baseFontSize = 1.2;
+var currentMode = 'calc'; // 'calc' or 'exchange'
+var fromCurrency = 'USD';
+var toCurrency = 'THB';
+var exchangeRate = 1.0;
+var chartInstance = null;
 
 var i18n = {
     'th': {
         'title': 'ส่วนลด',
+        'title-exchange': 'แลกเงิน',
         'label-price': 'ราคาปกติ',
         'label-discount': 'ส่วนลด (%)',
         'label-tax': 'ภาษี (%)',
@@ -16,10 +22,15 @@ var i18n = {
         'toggle-btn': 'English',
         'tax-on': 'เปิด',
         'tax-off': 'ปิด',
-        'header-math': 'วิธีคำนวณ:'
+        'header-math': 'วิธีคำนวณ:',
+        'mode-exchange': '💱 แลกเงิน',
+        'mode-calc': '🛒 ส่วนลด',
+        'label-amount': 'จำนวนเงิน',
+        'header-trend': 'แนวโน้มย้อนหลัง'
     },
     'en': {
         'title': 'Discount',
+        'title-exchange': 'Exchange',
         'label-price': 'Price',
         'label-discount': 'Discount (%)',
         'label-tax': 'Tax (%)',
@@ -30,7 +41,11 @@ var i18n = {
         'toggle-btn': 'ไทย',
         'tax-on': 'ON',
         'tax-off': 'OFF',
-        'header-math': 'How it\'s calculated:'
+        'header-math': 'How it\'s calculated:',
+        'mode-exchange': '💱 Exchange',
+        'mode-calc': '🛒 Discount',
+        'label-amount': 'Amount',
+        'header-trend': 'Historical Trend'
     }
 };
 
@@ -40,11 +55,36 @@ function changeFontSize(delta) {
     if (baseFontSize > 2.5) baseFontSize = 2.5;
     document.documentElement.style.setProperty('--base-font-size', baseFontSize + 'rem');
     localStorage.setItem('shop_font_size', baseFontSize);
-    createConfetti();
+    if (currentMode === 'calc') createConfetti();
 }
 
 function toggleLanguage() {
     currentLang = (currentLang === 'th') ? 'en' : 'th';
+    updateUI();
+}
+
+function toggleMode() {
+    currentMode = (currentMode === 'calc') ? 'exchange' : 'calc';
+    var calcEl = document.getElementById('calc-mode');
+    var exchangeEl = document.getElementById('exchange-mode');
+    var modeBtn = document.getElementById('mode-toggle');
+    var titleEl = document.querySelector('h1');
+
+    if (currentMode === 'calc') {
+        calcEl.style.display = 'block';
+        exchangeEl.style.display = 'none';
+        modeBtn.innerHTML = `<span data-i18n="mode-exchange">${i18n[currentLang]['mode-exchange']}</span>`;
+        titleEl.innerText = i18n[currentLang]['title'];
+        titleEl.setAttribute('data-i18n', 'title');
+    } else {
+        calcEl.style.display = 'none';
+        exchangeEl.style.display = 'block';
+        modeBtn.innerHTML = `<span data-i18n="mode-calc">${i18n[currentLang]['mode-calc']}</span>`;
+        titleEl.innerText = i18n[currentLang]['title-exchange'];
+        titleEl.setAttribute('data-i18n', 'title-exchange');
+        updateExchange();
+        updateChart(1);
+    }
     updateUI();
 }
 
@@ -71,9 +111,12 @@ function updateUI() {
         if (strings[key]) elements[i].innerText = strings[key];
     }
     document.getElementById('btn-lang').innerText = strings['toggle-btn'];
-    document.getElementById('tax-status-text').innerText = taxEnabled ? strings['tax-on'] : strings['tax-off'];
+    if (document.getElementById('tax-status-text')) {
+        document.getElementById('tax-status-text').innerText = taxEnabled ? strings['tax-on'] : strings['tax-off'];
+    }
 }
 
+// --- Calculator Mode ---
 function calculate() {
     var price = parseFloat(document.getElementById('input-price').value) || 0;
     var discount = parseFloat(document.getElementById('input-discount').value) || 0;
@@ -151,9 +194,141 @@ function createConfetti() {
     }
 }
 
+// --- Exchange Mode ---
+async function updateExchange() {
+    try {
+        const response = await fetch(`https://api.frankfurter.app/latest?from=${fromCurrency}&to=${toCurrency}`);
+        const data = await response.json();
+        exchangeRate = data.rates[toCurrency];
+        document.getElementById('current-rate').innerText = exchangeRate.toFixed(4);
+        convertCurrency();
+    } catch (error) {
+        console.error("Error fetching exchange rate:", error);
+    }
+}
+
+function convertCurrency() {
+    const amount = parseFloat(document.getElementById('input-exchange-amount').value) || 0;
+    const result = amount * exchangeRate;
+    
+    document.getElementById('exchange-from-text').innerText = `${amount.toLocaleString(undefined, {minimumFractionDigits: 2})} ${fromCurrency}`;
+    document.getElementById('exchange-result-val').innerText = result.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('exchange-to-code').innerText = toCurrency;
+    
+    document.getElementById('base-code').innerText = fromCurrency;
+    document.getElementById('target-code').innerText = toCurrency;
+}
+
+function swapCurrencies() {
+    const temp = fromCurrency;
+    fromCurrency = toCurrency;
+    toCurrency = temp;
+    
+    // Update Flags/Codes in UI
+    const fromEl = document.getElementById('from-currency');
+    const toEl = document.getElementById('to-currency');
+    
+    const fromFlag = fromCurrency === 'USD' ? '🇺🇸' : '🇹🇭';
+    const toFlag = toCurrency === 'USD' ? '🇺🇸' : '🇹🇭';
+    
+    fromEl.querySelector('.flag').innerText = fromFlag;
+    fromEl.querySelector('.code').innerText = fromCurrency;
+    toEl.querySelector('.flag').innerText = toFlag;
+    toEl.querySelector('.code').innerText = toCurrency;
+    
+    updateExchange();
+    // Re-fetch chart for new currency pair
+    const activeTf = document.querySelector('.tf-btn.active').getAttribute('data-tf');
+    updateChart(parseInt(activeTf));
+}
+
+async function updateChart(months) {
+    // Update UI buttons
+    document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.tf-btn[data-tf="${months}"]`).classList.add('active');
+
+    const end = new Date(2026, 3, 7); // Fixed "today" for this session: April 7, 2026
+    const start = new Date(2026, 3, 7);
+    start.setMonth(start.getMonth() - months);
+    
+    const startStr = start.toISOString().split('T')[0];
+    const endStr = end.toISOString().split('T')[0];
+    
+    try {
+        const response = await fetch(`https://api.frankfurter.app/${startStr}..${endStr}?from=${fromCurrency}&to=${toCurrency}`);
+        const data = await response.json();
+        
+        const labels = Object.keys(data.rates);
+        const values = labels.map(date => data.rates[date][toCurrency]);
+        
+        renderChart(labels, values);
+    } catch (error) {
+        console.error("Error fetching historical data:", error);
+    }
+}
+
+function renderChart(labels, values) {
+    const ctx = document.getElementById('rateChart').getContext('2d');
+    
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+    
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `${fromCurrency} to ${toCurrency}`,
+                data: values,
+                borderColor: '#C5A028',
+                backgroundColor: 'rgba(197, 160, 40, 0.1)',
+                borderWidth: 2,
+                pointRadius: 0,
+                pointHoverRadius: 5,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#1C1C1C',
+                    titleColor: '#C5A028',
+                    bodyColor: '#FFF',
+                    borderColor: '#C5A028',
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    grid: { display: false },
+                    ticks: {
+                        color: '#888',
+                        maxRotation: 0,
+                        autoSkip: true,
+                        maxTicksLimit: 6
+                    }
+                },
+                y: {
+                    display: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: { color: '#888' }
+                }
+            }
+        }
+    });
+}
+
 window.onload = function() {
     var savedTax = localStorage.getItem('shop_tax_rate');
-    if (savedTax) document.getElementById('input-tax').value = savedTax;
+    if (savedTax && document.getElementById('input-tax')) document.getElementById('input-tax').value = savedTax;
     var savedFont = localStorage.getItem('shop_font_size');
     if (savedFont) {
         baseFontSize = parseFloat(savedFont);
